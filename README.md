@@ -1,2 +1,2 @@
 # wazuh-rules
-Custom Wazuh Rules developed by FSN IT SOC Team
+Custom Wazuh Rules developed by FSN IT  SOC Team
