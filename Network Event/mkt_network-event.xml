@@ -1,0 +1,82 @@
+<group name="attack,">
+  <rule id="200007" level="1">
+    <match>Malicious_Traffic</match>
+    <description>Malicious Connection Request Detected</description>
+  </rule>
+  <rule id="200008" level="10" frequency="2" timeframe="60" ignore="30">
+    <if_matched_sid>200007</if_matched_sid>
+    <description>Known Malicious IP Address Traffic detected</description>
+    <mitre>
+      <id>T1203</id>
+      <id>T1204.001</id>
+    </mitre>
+   <group>pci_dss_6.5,pci_dss_11.4,gdpr_IV_35.7.d,nist_800_53_SA.11,nist_800_53_SI.4,tsc_CC6.6,tsc_CC7.1,tsc_CC8.1,tsc_CC6.1,tsc_CC6.8,tsc_CC7.2,tsc_CC7.3,</group>
+  </rule>
+  
+  
+  <rule id="200010" level="5" >
+    <regex>^l2tp,ppp,info,account \S+ logged in, \S+ from \S+</regex>
+    <description>L2TP/IPSEC VPN Connection Established by $(dstuser) from $(srcip).</description>
+    <mitre>
+      <id>T1133</id>
+    </mitre>
+    <group>authentication_success,pci_dss_10.2.5,gpg13_7.1,gpg13_7.2,gdpr_IV_32.2,hipaa_164.312.b,nist_800_53_AU.14,nist_800_53_AC.7,tsc_CC6.8,tsc_CC7.2,tsc_CC7.3,</group>
+  </rule>
+  
+  <rule id="200011" level="5">
+    <regex>^l2tp,ppp,info,account \S+ logged out, \d+ \d+ \d+ \d+ \d+ from \S+</regex>
+    <description>L2TP/IPSEC VPN user $(dstuser) Disconnected.</description>
+    <mitre>
+      <id>T1133</id>
+    </mitre>
+    <group>authentication_success,pci_dss_10.2.5,gpg13_7.1,gpg13_7.2,gdpr_IV_32.2,hipaa_164.312.b,nist_800_53_AU.14,nist_800_53_AC.7,tsc_CC6.8,tsc_CC7.2,tsc_CC7.3,</group>
+  </rule>
+  
+    <rule id="200020" level="5" >
+    <regex>^pptp,ppp,info,account \S+ logged in, \S+ from \S+</regex>
+    <description>PPTP VPN Connection Established by $(dstuser) from $(srcip).</description>
+    <mitre>
+      <id>T1133</id>
+    </mitre>
+    <group>authentication_success,pci_dss_10.2.5,gpg13_7.1,gpg13_7.2,gdpr_IV_32.2,hipaa_164.312.b,nist_800_53_AU.14,nist_800_53_AC.7,tsc_CC6.8,tsc_CC7.2,tsc_CC7.3,</group>
+  </rule>
+  
+  <rule id="200021" level="5">
+    <regex>^pptp,ppp,info,account \S+ logged out, \d+ \d+ \d+ \d+ \d+ from \S+</regex>
+    <description>PPTP VPN user $(dstuser) Disconnected.</description>
+    <mitre>
+      <id>T1133</id>
+    </mitre>
+    <group>authentication_success,pci_dss_10.2.5,gpg13_7.1,gpg13_7.2,gdpr_IV_32.2,hipaa_164.312.b,nist_800_53_AU.14,nist_800_53_AC.7,tsc_CC6.8,tsc_CC7.2,tsc_CC7.3,</group>
+  </rule>
+  
+  
+  
+  <rule id="1002" level="10" overwrite="yes">
+    <match>authentication failed</match>
+    <regex>l2tp,ppp,error \S(\S+)\S: \S+ (\S+) (\S+ \S+)</regex>
+    <description>VPN logged in failed. Someone trying to connect your system through l2tp/ipsec vpn service</description>
+    <mitre>
+      <id>T1133</id>
+    </mitre>
+    <group>gpg13_4.3,</group>
+  </rule>
+  
+  <rule id="200012" level="10">
+    <if_sid>1002</if_sid>
+    <list field="srcip" lookup="not_address_match_key">etc/lists/Known_IP_List</list>
+    <description>Unknown IP Connection Detected.</description>
+    <group>syslog,recon</group>
+  </rule>
+  
+  <rule id="200013" level="12" frequency="2" timeframe="120" ignore="10">
+  <if_matched_sid>1002</if_matched_sid>
+  <same_source_ip />
+  <description>Multiple Unsuccessful Logged in attemps from same source.</description>
+  <mitre>
+    <id>T1499</id>
+  </mitre>
+  <group>gdpr_IV_35.7.d,hipaa_164.312.b,invalid_request,nist_800_53_AU.14,nist_800_53_AC.7,nist_800_53_SI.4,pci_dss_10.2.4,pci_dss_11.4,tsc_CC6.1,tsc_CC6.8,tsc_CC7.2,tsc_CC7.3,</group>
+</rule>
+ 
+</group>
